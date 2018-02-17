@@ -46,6 +46,7 @@ Module.register("calendar", {
 
 	// Define required scripts.
 	getStyles: function () {
+		console.log('get styles calendar');
 		return ["calendar.css", "font-awesome.css"];
 	},
 
