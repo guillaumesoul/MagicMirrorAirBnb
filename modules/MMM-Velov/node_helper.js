@@ -6,7 +6,10 @@ module.exports = NodeHelper.create({
 	},
 	
 	reload: function(refConfig) {
+				
 		var self=this;
+		self.httpsRequestData = '';
+		
 		var options = {
 		  hostname: refConfig.dataGrandLyonURL,
 		  port: refConfig.dataGrandLyonPORT,
@@ -18,17 +21,24 @@ module.exports = NodeHelper.create({
 		};
 				
 		var req = https.request(options, (res) => {
-			
-		  res.setEncoding('utf8');
-		  res.on('data', (chunk) => {
-		    self.sendSocketNotification("RELOAD_DONE",chunk);
-		  });
-		  res.on('end', () => {
-			
-		  });
-		  req.on('error', (e) => {
-		  console.log(`problem with request: ${e.message}`);
+			res.setEncoding('utf8');
+			res.on('data', (chunk) => {
+					self.httpsRequestData += chunk;
+					try{
+						var JSONParsed = JSON.parse(self.httpsRequestData);
+						self.sendSocketNotification("RELOAD_DONE",JSONParsed);
+					
+					}catch(error) {
+					}	
 			});
+			
+			res.on('end', () => {
+			});
+			
+			req.on('error', (e) => {
+				console.log(`problem with request: ${e.message}`);
+			});
+			
 		});
 
 		req.end();

@@ -73,36 +73,25 @@ Module.register("MMM-Velov",{
 	},
 	socketNotificationReceived: function(notification, payload) {
 		
-		this.config.jsonData = this.config.jsonData+payload;
-		if(this.config.jsonData.length > 193000) {
-			
-			var test = this.config.jsonData.substr(15,this.config.jsonData.length);
-			var parsedData = JSON.parse(test);
-			
-			
-			for (var key in parsedData.values){
+		for (var key in payload.values){
 				var attrName = key;
-				var attrValue = parsedData.values[key];
+				var attrValue = payload.values[key];
 				
 				// "Dr Long  / Aubépins"
-				if(parsedData.values[key].gid == 789) {
+				if(payload.values[key].gid == 789) {
 					this.config.stations.push(attrValue); 
 				}
 				// Place antoinette
-				if(parsedData.values[key].gid == 1002) {
+				if(payload.values[key].gid == 1002) {
 					this.config.stations.push(attrValue); 
 				}
 				// Gare de villeurbanne
-				if(parsedData.values[key].gid == 794) {
+				if(payload.values[key].gid == 794) {
 					this.config.stations.push(attrValue); 
 				}	
 			}
-					
-			
-		}
 		
-		
-		if (notification === "RELOAD_DONE" && this.config.jsonData.length > 193000) {
+		if (notification === "RELOAD_DONE") {
 			this.loaded = true;
 			this.updateDom(this.animationSpeed);
 		} 

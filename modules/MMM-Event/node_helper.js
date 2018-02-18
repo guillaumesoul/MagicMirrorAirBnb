@@ -8,7 +8,7 @@ module.exports = NodeHelper.create({
 	reload: function(refConfig) {
 		
 		var self=this;
-		var i = 1;
+		self.httpsRequestData = '';
 
 		var options = {
 		  hostname: refConfig.opendataURL,
@@ -19,13 +19,23 @@ module.exports = NodeHelper.create({
 		    'Content-Type': 'application/json',
 		 }
 		};
+		
+		var dateRequest = self.getCurrentDate();
+		options.path += '&q=date_start>' + dateRequest;
+		options.path += '&q=date_start<' + '2018/02/28';
 				
 		var req = https.request(options, (res) => {
 			
 		  res.setEncoding('utf8');
 		  res.on('data', (chunk) => {
-		    self.sendSocketNotification("RELOAD_DONE",chunk);
-		  });
+				self.httpsRequestData += chunk;
+				try{
+					var JSONParsed = JSON.parse(self.httpsRequestData);
+					self.sendSocketNotification("RELOAD_DONE",JSONParsed);
+				
+				}catch(error) {
+				}	
+			});
 		  res.on('end', () => {
 			
 		  });
@@ -42,6 +52,12 @@ module.exports = NodeHelper.create({
 	    if (notification === 'RELOAD') {
 	      this.reload(payload);
 	    }
+	},
+	
+	getCurrentDate: function() {
+		var today = new Date();
+		var currentMonth = (today.getMonth() < 10 ? '0' : '') + parseInt(parseInt(today.getMonth())+1);
+		return today.getFullYear() + '/' + currentMonth + '/' + today.getDate();	 
 	}
 });
 
