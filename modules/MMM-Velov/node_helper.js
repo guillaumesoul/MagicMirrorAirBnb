@@ -7,17 +7,6 @@ module.exports = NodeHelper.create({
 	
 	reload: function(refConfig) {
 		var self=this;
-		var i = 1;
-		var ids ="[";
-		for (var c in refConfig.sensors) {
-			var sensor = refConfig.sensors[c];
-			ids =  ids + '"'+sensor.idx+'"';
-			if (i<refConfig.sensors.length) {
-				ids = ids + ',';
-			}
-			i++;
-		}
-
 		var options = {
 		  hostname: refConfig.dataGrandLyonURL,
 		  port: refConfig.dataGrandLyonPORT,
@@ -48,9 +37,6 @@ module.exports = NodeHelper.create({
 
 	socketNotificationReceived: function(notification, payload) {
 	    if (notification === 'RELOAD') {
-		for (var c in payload.sensors) {
-				var sensor = payload.sensors[c];
-			}
 	      this.reload(payload);
 	    }
 	}

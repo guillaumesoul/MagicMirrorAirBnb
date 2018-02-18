@@ -3,24 +3,11 @@
 Module.register("MMM-Velov",{
 	// Default module config.
 	defaults: {
-		puissance: "",
-		tsalon: "",
-		conso: "test",
 		updateInterval: 5000,
 		initialLoadDelay: 0,
 		animationSpeed: 1000,
 		result: {},
 		jsonData: {},
-		/*sensors: [
-			{
-				idx: "1",
-				symbolon: "fa fa-user",
-				symboloff: "fa fa-user-o",
-				hiddenon: false,
-				hiddenoff: false,
-				customTitle: "No sensor define in config",
-			},
-		],*/
 		stations: [],
 	},
 	
@@ -32,10 +19,10 @@ Module.register("MMM-Velov",{
 		this.title = "Loading...";
 		this.loaded = false;
 		var self = this;
-		setInterval(function() { self.updateJeedom(); }, this.config.updateInterval);
+		setInterval(function() { self.updateVelov(); }, this.config.updateInterval);
 
 		// first update on start
-		self.updateJeedom();
+		self.updateVelov();
 	},
 	getStyles: function() {
 	    return ['font-awesome.css', 'MMM-Velov.css'];
@@ -79,7 +66,7 @@ Module.register("MMM-Velov",{
 		return wrapper;
 
 	},
-	updateJeedom: function() {
+	updateVelov: function() {
 		this.config.jsonData = {};
 		this.config.stations = [];
 		this.sendSocketNotification('RELOAD',this.config);
