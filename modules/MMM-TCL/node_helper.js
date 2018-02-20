@@ -25,7 +25,6 @@ module.exports = NodeHelper.create({
 			
 			res.setEncoding('utf8');
 			res.on('data', (chunk) => {
-					console.log(chunk);
 					self.httpsRequestData += chunk;
 					try{
 						var JSONParsed = JSON.parse(self.httpsRequestData);
@@ -49,6 +48,7 @@ module.exports = NodeHelper.create({
 	},
 
 	socketNotificationReceived: function(notification, payload) {
+		console.log(notification);
 	    if (notification === 'RELOAD') {
 	      this.reload(payload);
 	    }

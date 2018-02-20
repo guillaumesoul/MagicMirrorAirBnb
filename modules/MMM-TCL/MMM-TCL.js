@@ -52,12 +52,17 @@ Module.register("MMM-TCL",{
 
 			var titleTD = document.createElement('td');
 			titleTD.className = "title bright align-left";
-			titleTD.innerHTML = station.name;
+			titleTD.innerHTML = station.ligne;
+			sensorWrapper.appendChild(titleTD);
+			
+			var titleTD = document.createElement('td');
+			titleTD.className = "title bright align-left";
+			titleTD.innerHTML = station.direction;
 			sensorWrapper.appendChild(titleTD);
 
 			var statusTD = document.createElement('td');
 			statusTD.className = "time light align-right";
-			statusTD.innerHTML = station.available_bikes;
+			statusTD.innerHTML = station.delaipassage;
 			sensorWrapper.appendChild(statusTD);
 
 			tableWrap.appendChild(sensorWrapper);
@@ -75,23 +80,19 @@ Module.register("MMM-TCL",{
 	},
 	socketNotificationReceived: function(notification, payload) {
 		
-		for (var key in payload.values){
-				var attrName = key;
-				var attrValue = payload.values[key];
-				
-				// "Dr Long  / Aubépins"
-				if(payload.values[key].gid == 789) {
-					this.config.stations.push(attrValue); 
-				}
-				// Place antoinette
-				if(payload.values[key].gid == 1002) {
-					this.config.stations.push(attrValue); 
-				}
-				// Gare de villeurbanne
-				if(payload.values[key].gid == 794) {
-					this.config.stations.push(attrValue); 
-				}	
-			}
+		for (var key in payload.values){	
+			var attrName = key;
+			var attrValue = payload.values[key];
+			
+			if(
+				payload.values[key].id == '42546' ||
+				payload.values[key].id == '35661' ||
+				payload.values[key].id == '42030' ||
+				payload.values[key].id == '42033' 
+			) {
+				this.config.stations.push(attrValue); 
+			} 
+		}
 		
 		if (notification === "RELOAD_DONE") {
 			this.loaded = true;
