@@ -81,6 +81,7 @@ Module.register("MMM-TCL",{
 	socketNotificationReceived: function(notification, payload) {
 		
 		for (var key in payload.values){	
+			console.log(key);
 			var attrName = key;
 			var attrValue = payload.values[key];
 			
