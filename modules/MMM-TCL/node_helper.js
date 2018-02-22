@@ -9,6 +9,7 @@ module.exports = NodeHelper.create({
 				
 		var self=this;
 		self.httpsRequestData = '';
+		self.tmpDate = null;
 		
 		var options = {
 		  hostname: refConfig.dataGrandLyonURL,
@@ -25,16 +26,36 @@ module.exports = NodeHelper.create({
 			
 			res.setEncoding('utf8');
 			res.on('data', (chunk) => {
-					self.httpsRequestData += chunk;
+				
+				//interval to wait before json is complete try catch at every step would have take oo much time (around 15s in average)
+				/*setInterval(function() {
 					try{
 						var JSONParsed = JSON.parse(self.httpsRequestData);
 						self.sendSocketNotification("RELOAD_DONE",JSONParsed);
 					
 					}catch(error) {
-					}	
+					}
+				}, 2000);*/
+				
+				
+					self.httpsRequestData += chunk;
+					
+					/*try{
+						var JSONParsed = JSON.parse(self.httpsRequestData);
+						self.sendSocketNotification("RELOAD_DONE",JSONParsed);
+					
+					}catch(error) {
+					}*/
 			});
 			
 			res.on('end', () => {
+				try{
+						console.log('allez');
+						var JSONParsed = JSON.parse(self.httpsRequestData);
+						self.sendSocketNotification("RELOAD_DONE",JSONParsed);
+					
+					}catch(error) {
+					}
 			});
 			
 			req.on('error', (e) => {
@@ -48,7 +69,6 @@ module.exports = NodeHelper.create({
 	},
 
 	socketNotificationReceived: function(notification, payload) {
-		console.log(notification);
 	    if (notification === 'RELOAD') {
 	      this.reload(payload);
 	    }

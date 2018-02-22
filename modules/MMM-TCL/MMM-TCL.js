@@ -27,7 +27,7 @@ Module.register("MMM-TCL",{
 		self.updateVelov();
 	},
 	getStyles: function() {
-	    return ['font-awesome.css', 'MMM-Velov.css'];
+	    return ['font-awesome.css', 'MMM-TCL.css'];
 	},
 	
 	// Override dom generator.
@@ -78,27 +78,58 @@ Module.register("MMM-TCL",{
 		this.config.stations = [];
 		this.sendSocketNotification('RELOAD',this.config);
 	},
+	isInStations: function() {
+		console.log('is in stations');
+	},
 	socketNotificationReceived: function(notification, payload) {
 		
+		//console.log('flute');
+		console.log('zut');
+		
 		for (var key in payload.values){	
-			console.log(key);
 			var attrName = key;
 			var attrValue = payload.values[key];
 			
 			if(
-				payload.values[key].id == '42546' ||
-				payload.values[key].id == '35661' ||
-				payload.values[key].id == '42030' ||
-				payload.values[key].id == '42033' 
-			) {
-				this.config.stations.push(attrValue); 
+				payload.values[key].id == '42616' ||
+				payload.values[key].id == '35664' ||
+				payload.values[key].id == '35665' ||
+				payload.values[key].id == '42616' ||
+				payload.values[key].id == '11002' ||
+				payload.values[key].id == '43120' ||
+				payload.values[key].id == '43119' 
+			) {				
+				var alreadyLoaded = false;
+				
+				for(var i in this.config.stations) {
+					if(this.config.stations[i].id == attrValue.id) {
+						alreadyLoaded = true;
+					}
+				}				
+				
+				if(!alreadyLoaded) {
+					this.config.stations.push(attrValue); 
+				}
 			} 
+			
+			
 		}
 		
 		if (notification === "RELOAD_DONE") {
 			this.loaded = true;
 			this.updateDom(this.animationSpeed);
 		} 
-	}
+	},
+	
+	
+	
+	/*isInStations: function(stationId) {
+		this.config.stations.each(function(station) {
+			console.log(station);
+			if(station.id == stationId) {
+				console.log('station exisrts');
+			}
+		});
+	}*/
 
 });
