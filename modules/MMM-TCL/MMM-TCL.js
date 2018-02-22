@@ -42,7 +42,13 @@ Module.register("MMM-TCL",{
 		}
 		var tableWrap = document.createElement("table");
 		tableWrap.className = "small";
-
+		
+		//tri par nom de ligne croissant
+		this.config.stations.sort(function(a,b) {
+			var str_a_ligne = a.ligne;
+			return a.ligne.localeCompare(b.ligne.toString());
+		});
+		
 		
 		for (var c in this.config.stations) {
 			var station = this.config.stations[c];
@@ -78,13 +84,17 @@ Module.register("MMM-TCL",{
 		this.config.stations = [];
 		this.sendSocketNotification('RELOAD',this.config);
 	},
-	isInStations: function() {
-		console.log('is in stations');
+	//determine si station deja ajoutee, permet de n'avoir que le prochain passage
+	isInStations: function (stationsLoaded, attrValue) {
+		var alreadyLoaded = false;
+		stationsLoaded.forEach(function(item) {
+			if(item.id == attrValue.id) {
+				alreadyLoaded = true;
+			}
+		});
+		return alreadyLoaded;
 	},
 	socketNotificationReceived: function(notification, payload) {
-		
-		//console.log('flute');
-		console.log('zut');
 		
 		for (var key in payload.values){	
 			var attrName = key;
@@ -98,21 +108,13 @@ Module.register("MMM-TCL",{
 				payload.values[key].id == '11002' ||
 				payload.values[key].id == '43120' ||
 				payload.values[key].id == '43119' 
-			) {				
-				var alreadyLoaded = false;
-				
-				for(var i in this.config.stations) {
-					if(this.config.stations[i].id == attrValue.id) {
-						alreadyLoaded = true;
-					}
-				}				
-				
+			) {	
+				var alreadyLoaded = this.isInStations(this.config.stations, attrValue);
+							
 				if(!alreadyLoaded) {
 					this.config.stations.push(attrValue); 
 				}
-			} 
-			
-			
+			} 			
 		}
 		
 		if (notification === "RELOAD_DONE") {
@@ -121,15 +123,5 @@ Module.register("MMM-TCL",{
 		} 
 	},
 	
-	
-	
-	/*isInStations: function(stationId) {
-		this.config.stations.each(function(station) {
-			console.log(station);
-			if(station.id == stationId) {
-				console.log('station exisrts');
-			}
-		});
-	}*/
 
 });
