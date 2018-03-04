@@ -1,0 +1,147 @@
+{
+	"title": "Settings",
+	"type": "object",
+	"format": "grid",
+	"properties": {
+		"port": {
+			"type": "number"
+		},
+		"language": {
+			"type": "string"
+		},
+		"timeFormat": {
+			"type": "number"
+		},
+		"units": {
+			"type": "string"
+		},
+		"modules": {
+			"title": "Modules",
+			"type": "array",
+			"format": "tabs",
+			"options": {
+				"disable_array_delete_all_rows": true,
+				"disable_array_delete_last_row": true
+			},
+			"items": {
+				"headerTemplate": "{{ self.module }}",
+				"type": "object",
+				"format": "grid",
+				"properties": {
+					"module": {
+						"type": "string"
+					},
+					"header": {
+						"type": "string"
+					},
+					"position": {
+						"type": "string",
+						"enum": [
+							"top_bar", "top_left", "top_center", "top_right", "upper_third", "middle_center", "lower_third", "bottom_left", "bottom_center", "bottom_right", "bottom_bar", "fullscreen_above", "fullscreen_below"
+						],
+						"default": "top"
+					},
+					"config": {
+						"title": "configuration",
+						"type": "object",
+						"properties": {
+								"calendars": {
+									"format": "tabs",
+									"options": {
+										"disable_array_delete_all_rows": true,
+										"disable_array_delete_last_row": true
+									},
+									"type": "array",
+									"items": {
+										"type": "object",
+										"headerTemplate": "Calender {{ i1 }}",
+										"properties": {
+											"symbol": {
+												"type": "string"
+											},
+											"url": {
+												"type": "string"
+											}
+										}
+									}
+								},
+								"compliments": {
+									"format": "grid",
+									"options": {
+										"disable_array_delete_all_rows": true,
+										"disable_array_delete_last_row": true
+									},
+									"type": "object",
+									"properties": {
+										"morning": {
+											"type": "array",
+											"format": "table",
+											"items": {
+												"type": "string"
+											}
+										},
+										"afternoon": {
+											"type": "array",
+											"format": "table",
+											"items": {
+												"type": "string"
+											}
+										},
+										"evening": {
+											"type": "array",
+											"format": "table",
+											"items": {
+												"type": "string"
+											}
+										}
+									}
+								},
+								"location": {
+									"type": "string"
+								},
+								"locationID": {
+									"type": "string"
+								},
+								"appid": {
+									"type": "string"
+								},
+								"feeds": {
+									"format": "tabs",
+									"options": {
+										"disable_array_delete_all_rows": true,
+										"disable_array_delete_last_row": true
+									},
+									"type": "array",
+									"items": {
+										"type": "object",
+										"headerTemplate": "{{self.title}}",
+										"properties": {
+											"title": {
+												"type": "string"
+											},
+											"url": {
+												"type": "string"
+											},
+											"encoding": {
+												"type": "string"
+											}
+										}
+									}
+								},
+								"showSourceTitle": {
+									"type": "boolean",
+									"format": "checkbox"
+								},
+								"showPublishDate": {
+									"type": "boolean",
+									"format": "checkbox"
+								}
+
+						}
+					}
+				}
+			}
+		}
+	}
+
+}

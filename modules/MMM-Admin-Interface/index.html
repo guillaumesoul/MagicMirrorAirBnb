@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Magic Mirror Settings</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css'>
+		<script src="jsoneditor.js"></script>
+	</head>
+	<body>
+		<div class="container">
+		<div class='page-header'>
+				<h1>Magic Mirror² Admin Interface</h1>
+		</div>
+		<p>
+			<button id='submit' class='btn btn-primary'>Save settings</button>
+			<button id='restore' class='btn btn-info'>Restore to Default</button>
+			<span id='valid_indicator' class='label'></span>
+		</p>
+		<p>
+			<div class="progress">
+				<div id="progress_bar" class="progress-bar progress-bar-striped active" style="width:0%"></div>
+			</div>
+			<div id="result_status" class="" role="alert"></div>
+		</p>
+		<div class='row'>
+			<div id='editor_holder' class='col-md-12'></div>
+		</div>
+		</div>
+		
+		<script>
+			JSONEditor.defaults.theme = 'bootstrap3';
+			JSONEditor.defaults.iconlib = 'fontawesome4';
+
+			// This is the starting value for the editor
+			// We will use this to seed the initial editor
+			// and to provide a "Restore to Default" button.
+			const startingValue = {{starting_value}}; //{{starting_value}} is replaced with the current values form config.js when served
+			// Initialize the editor
+			var editor = new JSONEditor( document.getElementById( "editor_holder" ), {
+				ajax: true,
+				schema: {
+					$ref: "./schema.json",
+					format: "grid"
+				},
+				startval: startingValue
+			} );
+
+			// Hook up the submit button to send the settings to the server
+			document.getElementById( "submit" ).addEventListener( "click", function() {
+				var xhr = new XMLHttpRequest();
+				var config = JSON.stringify( editor.getValue(), null, "\t" );
+				xhr.open( "POST", "/MMM-Admin-Interface/", true );
+				xhr.onreadystatechange = function() {
+					var progress_bar = document.getElementById( "progress_bar" );
+					var result_status = document.getElementById( "result_status" );
+					switch ( xhr.readyState ) {
+					case 1:
+						progress_bar.style.width = "25%";
+						break;
+					case 2:
+						progress_bar.style.width = "50%";
+						break;
+					case 3:
+						progress_bar.style.width = "75%";
+						break;
+					case 4:
+						progress_bar.className = "progress-bar";
+						progress_bar.style.width = "100%";
+						if ( xhr.status === 200 ) {
+							result_status.className = "alert alert-success";
+							result_status.textContent = xhr.responseText;
+						} else {
+							result_status.className = "alert alert-warning";
+							result_status.textContent = xhr.responseText;
+						}
+						break;
+					}
+				};
+				xhr.setRequestHeader( "Content-type", "application/json" );
+				xhr.send( config );
+
+			} );
+
+			// Hook up the Restore to Default button
+			document.getElementById( "restore" ).addEventListener( "click", function() {
+				editor.setValue( startingValue );
+			} );
+
+			// Hook up the validation indicator to update its
+			// status whenever the editor changes
+			editor.on( "change", function() {
+
+				// Get an array of errors from the validator
+				var errors = editor.validate();
+				var indicator = document.getElementById( "valid_indicator" );
+				if ( errors.length ) {
+					indicator.className = "label label-warning";
+					indicator.textContent = "not valid";
+				} else {
+					indicator.className = "label label-success";
+					indicator.textContent = "valid";
+				}
+			} );
+
+		</script>
+	</body>
+</html>
